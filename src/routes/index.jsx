@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import DealsPage from "@/modules/deals/pages/DealsPage";
 import MainLayout from "@/layouts/MainLayout";
-
+import TasksPage from "../modules/tasks/pages/TasksPage";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
 
 import LeadsPage from "@/modules/leads/pages/LeadsPage";
@@ -27,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "deals",
         element: <DealsPage />,
+      },
+      {
+        path: "tasks",
+        element: <TasksPage />,
       },
     ],
   },

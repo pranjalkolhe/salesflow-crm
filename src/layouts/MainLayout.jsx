@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import CommandPalette from "@/components/command/CommandPalette";
 import {
   Bell,
   ChevronLeft,
@@ -154,6 +154,7 @@ const MainLayout = () => {
           <Outlet />
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 };
