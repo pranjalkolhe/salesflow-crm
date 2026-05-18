@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CommandPalette from "@/components/command/CommandPalette";
+import NotificationBell from "@/components/notifications/NotificationBell";
 import {
   Bell,
   ChevronLeft,
@@ -136,11 +137,7 @@ const MainLayout = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <button className="relative rounded-2xl bg-white p-3 shadow-sm transition hover:shadow-md">
-                <Bell size={20} className="text-slate-600" />
-
-                <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-red-500" />
-              </button>
+              <NotificationBell />
 
               <button className="rounded-2xl bg-white p-3 shadow-sm transition hover:shadow-md">
                 <Settings size={20} className="text-slate-600" />
