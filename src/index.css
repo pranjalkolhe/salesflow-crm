@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* =========================
+   ROOT
+========================= */
+
 html,
 body,
 #root {
@@ -7,19 +11,66 @@ body,
 }
 
 body {
-  background: #f8fafc;
+  background: var(--bg-primary);
+
+  color: var(--text-primary);
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+
+  font-family: Inter, sans-serif;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+/* =========================
+   THEME TOKENS
+========================= */
+
+:root {
+  --bg-primary: #f8fafc;
+
+  --bg-secondary: #ffffff;
+
+  --border-color: #e2e8f0;
+
+  --text-primary: #0f172a;
+
+  --text-secondary: #64748b;
+
+  --hover-bg: #f1f5f9;
+}
+
+.dark {
+  --bg-primary: #020617;
+
+  --bg-secondary: #0f172a;
+
+  --border-color: #1e293b;
+
+  --text-primary: #f8fafc;
+
+  --text-secondary: #94a3b8;
+
+  --hover-bg: #172033;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+/* Chrome / Safari / Opera */
 ::-webkit-scrollbar {
   width: 0px;
+
   height: 0px;
+
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
+/* IE / Edge / Firefox */
 * {
   -ms-overflow-style: none;
+
   scrollbar-width: none;
 }
 
@@ -29,4 +80,161 @@ body {
 
 .hide-scrollbar {
   scrollbar-width: none;
+}
+
+/* =========================
+   GLOBAL INPUTS
+========================= */
+
+.crm-input {
+  height: 48px;
+
+  width: 100%;
+
+  border-radius: 18px;
+
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-secondary);
+
+  padding-left: 16px;
+
+  padding-right: 16px;
+
+  color: var(--text-primary);
+
+  outline: none;
+
+  transition: all 0.2s ease;
+}
+
+.crm-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.crm-input:focus {
+  border-color: #3b82f6;
+
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   GLOBAL SELECTS
+========================= */
+
+.crm-select {
+  height: 48px;
+
+  width: 100%;
+
+  border-radius: 18px;
+
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-secondary);
+
+  padding-left: 16px;
+
+  padding-right: 16px;
+
+  color: var(--text-primary);
+
+  outline: none;
+
+  transition: all 0.2s ease;
+
+  appearance: none;
+}
+
+.crm-select:focus {
+  border-color: #3b82f6;
+
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* FIX SELECT OPTIONS */
+.crm-select option {
+  background: white;
+
+  color: black;
+}
+
+.dark .crm-select option {
+  background: #0f172a;
+
+  color: white;
+}
+
+/* =========================
+   GLOBAL TEXTAREA
+========================= */
+
+.crm-textarea {
+  width: 100%;
+
+  border-radius: 18px;
+
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-secondary);
+
+  padding: 16px;
+
+  color: var(--text-primary);
+
+  outline: none;
+
+  resize: none;
+
+  transition: all 0.2s ease;
+}
+
+.crm-textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+.crm-textarea:focus {
+  border-color: #3b82f6;
+
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* =========================
+   GLOBAL CARD
+========================= */
+
+.crm-card {
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-secondary);
+
+  border-radius: 32px;
+
+  transition:
+    background 0.25s ease,
+    border 0.25s ease;
+}
+
+/* =========================
+   GLOBAL MODAL
+========================= */
+
+.crm-modal {
+  border: 1px solid var(--border-color);
+
+  background: var(--bg-secondary);
+
+  color: var(--text-primary);
+}
+
+/* =========================
+   GLOBAL BUTTON HOVER
+========================= */
+
+.crm-hover {
+  transition: background 0.2s ease;
+}
+
+.crm-hover:hover {
+  background: var(--hover-bg);
 }

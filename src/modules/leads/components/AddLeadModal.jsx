@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 
 import { useForm } from "react-hook-form";
-import { useRef } from "react";
 
-import useOutsideClick from "@/hooks/useOutsideClick";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { z } from "zod";
 
 import { toast } from "sonner";
@@ -40,19 +39,35 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
   });
 
   const { addLead, updateLead } = useLeadStore();
-  const modalRef = useRef(null);
-
-  useOutsideClick(modalRef, onClose);
 
   useEffect(() => {
     if (editLead) {
       reset({
         name: editLead.name,
+
         email: editLead.email,
+
         company: editLead.company,
+
         status: editLead.status,
+
         source: editLead.source,
+
         value: editLead.value,
+      });
+    } else {
+      reset({
+        name: "",
+
+        email: "",
+
+        company: "",
+
+        status: "Qualified",
+
+        source: "Website",
+
+        value: "",
       });
     }
   }, [editLead, reset]);
@@ -69,11 +84,17 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
       } else {
         addLead({
           name: data.name,
+
           email: data.email,
+
           company: data.company,
+
           status: data.status,
+
           source: data.source,
+
           value: data.value,
+
           owner: "Admin",
 
           initials: data.name
@@ -98,7 +119,6 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
   return (
     <Modal
-      ref={modalRef}
       className="w-full max-w-xl"
       open={open}
       onClose={onClose}
@@ -107,7 +127,7 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Name */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Full Name
           </label>
 
@@ -120,7 +140,7 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
         {/* Email */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Email Address
           </label>
 
@@ -133,7 +153,7 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
         {/* Company */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Company Name
           </label>
 
@@ -148,14 +168,11 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
         {/* Status */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Lead Status
           </label>
 
-          <select
-            className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 outline-none transition-all focus:border-blue-500"
-            {...register("status")}
-          >
+          <select className="crm-select" {...register("status")}>
             <option value="Qualified">Qualified</option>
 
             <option value="Proposal">Proposal</option>
@@ -170,14 +187,11 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
         {/* Source */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Lead Source
           </label>
 
-          <select
-            className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 outline-none transition-all focus:border-blue-500"
-            {...register("source")}
-          >
+          <select className="crm-select" {...register("source")}>
             <option value="Website">Website</option>
 
             <option value="Referral">Referral</option>
@@ -190,7 +204,7 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
         {/* Deal Value */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
+          <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Deal Value
           </label>
 
