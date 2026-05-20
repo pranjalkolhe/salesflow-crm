@@ -3,7 +3,7 @@ import DealsPage from "@/modules/deals/pages/DealsPage";
 import MainLayout from "@/layouts/MainLayout";
 import TasksPage from "../modules/tasks/pages/TasksPage";
 import DashboardPage from "@/modules/dashboard/pages/DashboardPage";
-
+import SettingsPage from "@/modules/settings/pages/SettingsPage";
 import LeadsPage from "@/modules/leads/pages/LeadsPage";
 
 const router = createBrowserRouter([
@@ -31,6 +31,11 @@ const router = createBrowserRouter([
       {
         path: "tasks",
         element: <TasksPage />,
+      },
+      {
+        path: "settings",
+
+        element: <SettingsPage />,
       },
     ],
   },

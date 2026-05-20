@@ -1,5 +1,7 @@
 import { useState } from "react";
-
+import useNotificationStore from "@/store/useNotificationStore";
+import useToastStore from "@/store/useToastStore";
+import useActivityLogger from "@/components/activity/useActivityLogger";
 import {
   DndContext,
   closestCorners,
@@ -16,6 +18,7 @@ import TasksHeader from "../components/TasksHeader";
 import useTasks from "../hooks/useTasks";
 
 import { taskStatuses } from "../constants/statuses";
+import TaskDetailsDrawer from "../components/TaskDetailsDrawer";
 
 const columnColors = {
   "To Do": "from-blue-500 to-indigo-600",
@@ -66,6 +69,9 @@ const TasksPage = () => {
   const [activeTask, setActiveTask] = useState(null);
 
   const [hoveredColumn, setHoveredColumn] = useState(null);
+  const { addNotification } = useNotificationStore();
+  const { addToast } = useToastStore();
+  const { logActivity } = useActivityLogger();
 
   // Drag Start
   const handleDragStart = (event) => {
@@ -87,7 +93,58 @@ const TasksPage = () => {
     const taskId = Number(active.id);
 
     if (taskStatuses.includes(over.id)) {
+      const activeTask = groupedTasks
+        .flatMap((column) => column.tasks)
+        .find((task) => task.id === taskId);
+
+      // Prevent same-column drop
+      if (activeTask?.status === over.id) {
+        return;
+      }
       moveTask(taskId, over.id);
+
+      const movedTask = groupedTasks
+        .flatMap((column) => column.tasks)
+        .find((task) => task.id === taskId);
+
+      if (movedTask) {
+        logActivity({
+          type: "task",
+
+          title: `${movedTask.title} moved to ${over.id}`,
+        });
+
+        addNotification({
+          type: "task",
+
+          title: "Task moved",
+
+          message: `${movedTask.title} moved to ${over.id}.`,
+
+          time: "Just now",
+        });
+        addToast({
+          type: "task",
+
+          title: "Task created",
+
+          message: `${data.title} added successfully.`,
+        });
+        addToast({
+          type: "task",
+
+          title: "Task deleted",
+
+          message: `${deleteTaskData.title} removed from workflow.`,
+        });
+        addToast({
+          type: "task",
+
+          title: "Task moved",
+
+          message: `${movedTask.title} moved to ${over.id}.`,
+        });
+      }
     }
 
     setActiveTask(null);
@@ -114,8 +171,40 @@ const TasksPage = () => {
         onSubmit={(data) => {
           if (editingTask) {
             updateTask(editingTask.id, data);
+
+            logActivity({
+              type: "task",
+
+              title: `${data.title} task updated`,
+            });
+
+            addNotification({
+              type: "task",
+
+              title: "Task updated",
+
+              message: `${data.title} updated successfully.`,
+
+              time: "Just now",
+            });
           } else {
             addTask(data);
+
+            logActivity({
+              type: "task",
+
+              title: `${data.title} task created`,
+            });
+
+            addNotification({
+              type: "task",
+
+              title: "New task created",
+
+              message: `${data.title} added successfully.`,
+
+              time: "Just now",
+            });
           }
         }}
       />
@@ -130,6 +219,22 @@ const TasksPage = () => {
         onClose={() => setDeleteTaskData(null)}
         onConfirm={() => {
           deleteTask(deleteTaskData.id);
+
+          logActivity({
+            type: "task",
+
+            title: `${deleteTaskData.title} deleted`,
+          });
+
+          addNotification({
+            type: "task",
+
+            title: "Task deleted",
+
+            message: `${deleteTaskData.title} removed from workflow.`,
+
+            time: "Just now",
+          });
 
           setDeleteTaskData(null);
         }}
@@ -207,73 +312,11 @@ const TasksPage = () => {
       </DndContext>
 
       {/* Details Modal */}
-      {selectedTask && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 p-6 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-[32px] bg-white p-8 shadow-2xl">
-            {/* Header */}
-            <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-4xl font-bold text-slate-900">
-                  {selectedTask.title}
-                </h2>
-
-                <p className="mt-2 text-slate-500">Task Details</p>
-              </div>
-
-              <button
-                onClick={() => setSelectedTask(null)}
-                className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-semibold transition hover:bg-slate-200"
-              >
-                Close
-              </button>
-            </div>
-
-            {/* Grid */}
-            <div className="mt-10 grid gap-6 md:grid-cols-2">
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Assignee</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedTask.assignee}
-                </h3>
-              </div>
-
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Due Date</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedTask.dueDate}
-                </h3>
-              </div>
-
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Priority</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedTask.priority}
-                </h3>
-              </div>
-
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Status</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedTask.status}
-                </h3>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="mt-6 rounded-3xl bg-slate-50 p-6">
-              <p className="text-sm text-slate-400">Description</p>
-
-              <p className="mt-3 leading-8 text-slate-600">
-                {selectedTask.description}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <TaskDetailsDrawer
+        task={selectedTask}
+        open={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
     </div>
   );
 };

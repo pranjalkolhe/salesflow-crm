@@ -1,6 +1,9 @@
 import { useState } from "react";
 import AddDealModal from "../components/AddDealModal";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import useActivityLogger from "@/components/activity/useActivityLogger";
+import useNotificationStore from "@/store/useNotificationStore";
+import useToastStore from "@/store/useToastStore";
 import {
   DndContext,
   closestCorners,
@@ -12,6 +15,7 @@ import DealCard from "../components/DealCard";
 import DealsHeader from "../components/DealsHeader";
 
 import useDeals from "../hooks/useDeals";
+import DealDetailsDrawer from "../components/DealDetailsDrawer";
 
 const columnColors = {
   Qualified: "from-blue-500 to-indigo-600",
@@ -64,6 +68,9 @@ const DealsPage = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const [editingDeal, setEditingDeal] = useState(null);
+  const { addNotification } = useNotificationStore();
+  const { addToast } = useToastStore();
+  const { logActivity } = useActivityLogger();
 
   // Drag Start
   const handleDragStart = (event) => {
@@ -83,10 +90,47 @@ const DealsPage = () => {
     if (!over) return;
 
     const dealId = Number(active.id);
+    const activeDeal = groupedDeals
+      .flatMap((column) => column.deals)
+      .find((deal) => deal.id === dealId);
+
+    // Prevent same-stage drop
+    if (activeDeal?.stage === over.id) {
+      return;
+    }
 
     // Only allow valid stages
     if (stages.includes(over.id)) {
       moveDeal(dealId, over.id);
+
+      const movedDeal = groupedDeals
+        .flatMap((column) => column.deals)
+        .find((deal) => deal.id === dealId);
+
+      if (movedDeal) {
+        logActivity({
+          type: "deal",
+
+          title: `${movedDeal.company} moved to ${over.id}`,
+        });
+
+        addNotification({
+          type: "deal",
+
+          title: "Deal moved",
+
+          message: `${movedDeal.company} moved to ${over.id}.`,
+
+          time: "Just now",
+        });
+        addToast({
+          type: "deal",
+
+          title: "Deal moved",
+
+          message: `${movedDeal.company} moved to ${over.id}.`,
+        });
+      }
     }
 
     setActiveDeal(null);
@@ -180,11 +224,59 @@ const DealsPage = () => {
         open={openModal}
         onClose={() => setOpenModal(false)}
         initialData={editingDeal}
-        onSubmit={(data) => {
+        vonSubmit={(data) => {
           if (editingDeal) {
             updateDeal(editingDeal.id, data);
+
+            logActivity({
+              type: "deal",
+
+              title: `${data.company} deal updated`,
+            });
+
+            addNotification({
+              type: "deal",
+
+              title: "Deal updated",
+
+              message: `${data.company} updated successfully.`,
+
+              time: "Just now",
+            });
+
+            addToast({
+              type: "deal",
+
+              title: "Deal updated",
+
+              message: `${data.company} updated successfully.`,
+            });
           } else {
             addDeal(data);
+
+            logActivity({
+              type: "deal",
+
+              title: `${data.company} deal created`,
+            });
+
+            addNotification({
+              type: "deal",
+
+              title: "Deal created",
+
+              message: `${data.company} created successfully.`,
+
+              time: "Just now",
+            });
+
+            addToast({
+              type: "deal",
+
+              title: "Deal created",
+
+              message: `${data.company} created successfully.`,
+            });
           }
         }}
       />
@@ -198,77 +290,39 @@ const DealsPage = () => {
         onConfirm={() => {
           deleteDeal(deleteDealData.id);
 
+          logActivity({
+            type: "deal",
+
+            title: `${deleteDealData.company} deal deleted`,
+          });
+
+          addNotification({
+            type: "deal",
+
+            title: "Deal deleted",
+
+            message: `${deleteDealData.company} removed from pipeline.`,
+
+            time: "Just now",
+          });
+
+          addToast({
+            type: "deal",
+
+            title: "Deal deleted",
+
+            message: `${deleteDealData.company} removed from pipeline.`,
+          });
+
           setDeleteDealData(null);
         }}
       />
       {/* Modal */}
-      {selectedDeal && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-[32px] bg-white p-8 shadow-2xl">
-            {/* Header */}
-            <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-4xl font-bold text-slate-900">
-                  {selectedDeal.company}
-                </h2>
-
-                <p className="mt-2 text-slate-500">Deal Overview</p>
-              </div>
-
-              <button
-                onClick={() => setSelectedDeal(null)}
-                className="rounded-2xl bg-slate-100 px-4 py-2 text-sm font-semibold transition hover:bg-slate-200"
-              >
-                Close
-              </button>
-            </div>
-
-            {/* Grid */}
-            <div className="mt-10 grid gap-6 md:grid-cols-2">
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Deal Value</p>
-
-                <h3 className="mt-3 text-4xl font-bold text-slate-900">
-                  {selectedDeal.value}
-                </h3>
-              </div>
-
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Owner</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedDeal.owner}
-                </h3>
-              </div>
-
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Source</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedDeal.source}
-                </h3>
-              </div>
-
-              <div className="rounded-3xl bg-slate-50 p-6">
-                <p className="text-sm text-slate-400">Priority</p>
-
-                <h3 className="mt-3 text-2xl font-bold text-slate-900">
-                  {selectedDeal.priority}
-                </h3>
-              </div>
-            </div>
-
-            {/* Notes */}
-            <div className="mt-6 rounded-3xl bg-slate-50 p-6">
-              <p className="text-sm text-slate-400">Notes</p>
-
-              <p className="mt-3 leading-8 text-slate-600">
-                {selectedDeal.notes}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <DealDetailsDrawer
+        deal={selectedDeal}
+        open={!!selectedDeal}
+        onClose={() => setSelectedDeal(null)}
+      />
     </div>
   );
 };

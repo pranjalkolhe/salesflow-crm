@@ -1,6 +1,5 @@
 import { DollarSign, Target, TrendingUp, Users } from "lucide-react";
-
-import ActivityFeed from "../components/ActivityFeed";
+import ActivityFeedPanel from "@/components/activity/ActivityFeedPanel";
 import AnalyticsCard from "../components/AnalyticsCard";
 import RecentLeads from "../components/RecentLeads";
 import RevenueChart from "../components/RevenueChart";
@@ -86,7 +85,7 @@ const DashboardPage = () => {
 
       {/* Bottom Widgets */}
       <div className="grid gap-6 xl:grid-cols-2">
-        <ActivityFeed />
+        <ActivityFeedPanel />
 
         <TasksWidget />
       </div>

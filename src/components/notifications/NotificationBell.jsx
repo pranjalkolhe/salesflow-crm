@@ -1,5 +1,7 @@
 import { Bell } from "lucide-react";
+import { useRef } from "react";
 
+import useOutsideClick from "@/hooks/useOutsideClick";
 import { useState } from "react";
 
 import NotificationPanel from "./NotificationPanel";
@@ -15,8 +17,12 @@ const NotificationBell = () => {
     (notification) => !notification.read,
   ).length;
 
+  const panelRef = useRef(null);
+
+  useOutsideClick(panelRef, () => setOpen(false));
+
   return (
-    <div className="relative">
+    <div ref={panelRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
         className="relative rounded-2xl bg-white p-3 shadow-sm transition hover:shadow-md"

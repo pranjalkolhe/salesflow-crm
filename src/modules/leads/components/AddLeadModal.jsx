@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 
 import { useForm } from "react-hook-form";
+import { useRef } from "react";
 
+import useOutsideClick from "@/hooks/useOutsideClick";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -38,6 +40,9 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
   });
 
   const { addLead, updateLead } = useLeadStore();
+  const modalRef = useRef(null);
+
+  useOutsideClick(modalRef, onClose);
 
   useEffect(() => {
     if (editLead) {
@@ -93,6 +98,8 @@ const AddLeadModal = ({ open, onClose, editLead }) => {
 
   return (
     <Modal
+      ref={modalRef}
+      className="w-full max-w-xl"
       open={open}
       onClose={onClose}
       title={editLead ? "Edit Lead" : "Add New Lead"}

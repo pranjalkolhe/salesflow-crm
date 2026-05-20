@@ -1,6 +1,9 @@
 import { useState } from "react";
 import CommandPalette from "@/components/command/CommandPalette";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import ToastContainer from "@/components/toast/ToastContainer";
+import useThemeStore from "@/store/useThemeStore";
+import useProfileStore from "@/store/useProfileStore";
 import {
   Bell,
   ChevronLeft,
@@ -15,9 +18,14 @@ import sidebarLinks from "./sidebar.data";
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-
+  const { darkMode, compactMode } = useThemeStore();
+  const { profile } = useProfileStore();
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-100">
+    <div
+      className={`flex h-screen transition-colors duration-300 ${
+        darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
+      }`}
+    >
       {/* Sidebar */}
       <aside
         className={`fixed left-0 top-0 z-50 flex h-screen flex-col bg-[#081028] text-white transition-all duration-300 ${
@@ -96,15 +104,23 @@ const MainLayout = () => {
               collapsed ? "justify-center" : "gap-4"
             }`}
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-lg font-bold">
-              PK
-            </div>
+            {profile.avatar ? (
+              <img
+                src={profile.avatar}
+                alt="avatar"
+                className="h-14 w-14 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-lg font-bold text-white">
+                {profile.name?.charAt(0)}
+              </div>
+            )}
 
             {!collapsed && (
               <div>
-                <h3 className="font-semibold text-white">Pranjal</h3>
+                <h3 className="font-bold text-white">{profile.name}</h3>
 
-                <p className="text-sm text-slate-400">Super Admin</p>
+                <p className="text-sm text-slate-400">{profile.role}</p>
               </div>
             )}
           </div>
@@ -147,11 +163,16 @@ const MainLayout = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-100 p-6 md:p-8">
+        <main
+          className={`flex-1 overflow-hidden transition-all duration-300 ${
+            compactMode ? "p-3" : "p-6"
+          }`}
+        >
           <Outlet />
         </main>
       </div>
       <CommandPalette />
+      <ToastContainer />
     </div>
   );
 };

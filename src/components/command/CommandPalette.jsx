@@ -1,7 +1,9 @@
 import { Search } from "lucide-react";
 
 import { useMemo, useState } from "react";
+import { useRef } from "react";
 
+import useOutsideClick from "@/hooks/useOutsideClick";
 import {
   Command,
   CommandEmpty,
@@ -30,6 +32,9 @@ const CommandPalette = () => {
     if (!search) return commandData;
 
     const lowerSearch = search.toLowerCase();
+    const paletteRef = useRef(null);
+
+    useOutsideClick(paletteRef, () => setOpen(false));
 
     return [...commandData].sort((a, b) => {
       const aTitle = a.title.toLowerCase();
@@ -59,7 +64,10 @@ const CommandPalette = () => {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/40 p-6 pt-24 backdrop-blur-sm">
-      <div className="w-full max-w-2xl overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-2xl">
+      <div
+        ref={paletteRef}
+        className="w-full max-w-2xl overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-2xl"
+      >
         <Command shouldFilter className="w-full">
           {/* Search */}
           <div className="flex items-center border-b border-slate-100 px-5">

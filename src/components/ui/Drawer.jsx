@@ -1,21 +1,29 @@
 import { AnimatePresence, motion } from "framer-motion";
+
 import { X } from "lucide-react";
 
 import { useEffect, useRef } from "react";
 
 import useOutsideClick from "@/hooks/useOutsideClick";
 
-const Modal = ({ open, onClose, title, children }) => {
-  const modalRef = useRef(null);
+const Drawer = ({
+  open,
+  onClose,
+  title,
+  subtitle,
+  children,
+  width = "max-w-md",
+}) => {
+  const drawerRef = useRef(null);
 
-  // Outside click close
-  useOutsideClick(modalRef, () => {
+  // Outside click
+  useOutsideClick(drawerRef, () => {
     if (open) {
       onClose();
     }
   });
 
-  // ESC key close
+  // ESC close
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && open) {
@@ -48,40 +56,36 @@ const Modal = ({ open, onClose, title, children }) => {
             transition={{
               duration: 0.2,
             }}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
           />
 
-          {/* Modal */}
+          {/* Drawer */}
           <motion.div
-            ref={modalRef}
+            ref={drawerRef}
             initial={{
-              opacity: 0,
-              scale: 0.95,
-              y: 20,
+              x: "100%",
             }}
             animate={{
-              opacity: 1,
-              scale: 1,
-              y: 0,
+              x: 0,
             }}
             exit={{
-              opacity: 0,
-              scale: 0.95,
-              y: 20,
+              x: "100%",
             }}
             transition={{
-              duration: 0.2,
+              type: "spring",
+              damping: 28,
+              stiffness: 260,
             }}
-            className="fixed left-1/2 top-1/2 z-50 w-[92%] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-[32px] border border-slate-200 bg-white p-6 shadow-2xl"
+            className={`fixed right-0 top-0 z-50 h-screen w-full ${width} border-l border-slate-200 bg-white shadow-2xl`}
           >
             {/* Header */}
-            <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-start justify-between border-b border-slate-100 px-6 py-6">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
+                <h2 className="text-3xl font-bold text-slate-900">{title}</h2>
 
-                <p className="mt-1 text-sm text-slate-500">
-                  Manage CRM workflow details
-                </p>
+                {subtitle && (
+                  <p className="mt-2 text-sm text-slate-500">{subtitle}</p>
+                )}
               </div>
 
               <button
@@ -93,7 +97,7 @@ const Modal = ({ open, onClose, title, children }) => {
             </div>
 
             {/* Body */}
-            <div className="hide-scrollbar max-h-[70vh] overflow-y-auto pr-1">
+            <div className="hide-scrollbar h-[calc(100vh-110px)] overflow-y-auto p-6">
               {children}
             </div>
           </motion.div>
@@ -103,4 +107,4 @@ const Modal = ({ open, onClose, title, children }) => {
   );
 };
 
-export default Modal;
+export default Drawer;

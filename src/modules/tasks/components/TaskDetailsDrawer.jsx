@@ -1,11 +1,4 @@
-import {
-  Briefcase,
-  CalendarDays,
-  CircleDollarSign,
-  Flag,
-  Layers3,
-  User2,
-} from "lucide-react";
+import { CalendarDays, CheckCircle2, Flag, User2 } from "lucide-react";
 
 import Drawer from "@/components/ui/Drawer";
 
@@ -17,19 +10,19 @@ const priorityColors = {
   Low: "bg-blue-100 text-blue-600",
 };
 
-const DealDetailsDrawer = ({ deal, open, onClose }) => {
-  if (!deal) return null;
+const TaskDetailsDrawer = ({ task, open, onClose }) => {
+  if (!task) return null;
 
   return (
     <Drawer
       open={open}
       onClose={onClose}
-      title={deal.company}
-      subtitle="Deal Details"
+      title={task.title}
+      subtitle="Task Details"
       width="max-w-lg"
     >
       <div className="space-y-6">
-        {/* Owner */}
+        {/* Assignee */}
         <div className="rounded-3xl bg-slate-50 p-5">
           <div className="flex items-center gap-4">
             <div className="rounded-2xl bg-blue-100 p-3 text-blue-600">
@@ -37,44 +30,27 @@ const DealDetailsDrawer = ({ deal, open, onClose }) => {
             </div>
 
             <div>
-              <p className="text-sm text-slate-500">Deal Owner</p>
+              <p className="text-sm text-slate-500">Assignee</p>
 
               <h3 className="mt-1 text-xl font-bold text-slate-900">
-                {deal.owner}
+                {task.assignee}
               </h3>
             </div>
           </div>
         </div>
 
-        {/* Value */}
+        {/* Status */}
         <div className="rounded-3xl bg-slate-50 p-5">
           <div className="flex items-center gap-4">
             <div className="rounded-2xl bg-emerald-100 p-3 text-emerald-600">
-              <CircleDollarSign size={20} />
+              <CheckCircle2 size={20} />
             </div>
 
             <div>
-              <p className="text-sm text-slate-500">Deal Value</p>
-
-              <h3 className="mt-1 text-3xl font-bold text-slate-900">
-                {deal.value}
-              </h3>
-            </div>
-          </div>
-        </div>
-
-        {/* Stage */}
-        <div className="rounded-3xl bg-slate-50 p-5">
-          <div className="flex items-center gap-4">
-            <div className="rounded-2xl bg-violet-100 p-3 text-violet-600">
-              <Layers3 size={20} />
-            </div>
-
-            <div>
-              <p className="text-sm text-slate-500">Stage</p>
+              <p className="text-sm text-slate-500">Status</p>
 
               <h3 className="mt-1 text-xl font-bold text-slate-900">
-                {deal.stage}
+                {task.status}
               </h3>
             </div>
           </div>
@@ -92,51 +68,43 @@ const DealDetailsDrawer = ({ deal, open, onClose }) => {
 
               <span
                 className={`mt-2 inline-flex rounded-full px-4 py-2 text-sm font-semibold ${
-                  priorityColors[deal.priority]
+                  priorityColors[task.priority]
                 }`}
               >
-                {deal.priority}
+                {task.priority}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Date */}
+        {/* Due Date */}
         <div className="rounded-3xl bg-slate-50 p-5">
           <div className="flex items-center gap-4">
-            <div className="rounded-2xl bg-indigo-100 p-3 text-indigo-600">
+            <div className="rounded-2xl bg-violet-100 p-3 text-violet-600">
               <CalendarDays size={20} />
             </div>
 
             <div>
-              <p className="text-sm text-slate-500">Start Date</p>
+              <p className="text-sm text-slate-500">Due Date</p>
 
               <h3 className="mt-1 text-xl font-bold text-slate-900">
-                {deal.startDate}
+                {task.dueDate}
               </h3>
             </div>
           </div>
         </div>
 
-        {/* Notes */}
+        {/* Description */}
         <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-5">
-          <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-slate-200 p-3 text-slate-700">
-              <Briefcase size={20} />
-            </div>
+          <p className="text-sm text-slate-500">Description</p>
 
-            <div>
-              <p className="text-sm text-slate-500">Notes</p>
-
-              <p className="mt-2 leading-7 text-slate-600">
-                {deal.notes || "No notes available."}
-              </p>
-            </div>
-          </div>
+          <p className="mt-3 leading-7 text-slate-600">
+            {task.description || "No description available."}
+          </p>
         </div>
       </div>
     </Drawer>
   );
 };
 
-export default DealDetailsDrawer;
+export default TaskDetailsDrawer;

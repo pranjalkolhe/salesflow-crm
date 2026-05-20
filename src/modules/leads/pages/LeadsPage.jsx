@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import useToastStore from "@/store/useToastStore";
 import AddLeadModal from "../components/AddLeadModal";
 import LeadsHeader from "../components/LeadsHeader";
 import LeadsStats from "../components/LeadsStats";
@@ -12,6 +12,7 @@ import useLeads from "../hooks/useLeads";
 
 const LeadsPage = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
+  const { addToast } = useToastStore();
 
   const {
     search,
